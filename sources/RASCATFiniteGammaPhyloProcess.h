@@ -201,13 +201,30 @@ class RASCATFiniteGammaPhyloProcess : public virtual PoissonPhyloProcess, public
 
     void TraceMixtureProfileAlloc(ostream& os) {
         for (int i=0; i<GetNsite(); i++) {
-            os << MixtureProfileProcess::alloc[i] << ',';
+            if (i!=0){
+                os << ',';
+            }
+            os << FiniteProfileProcess::alloc[i];
+        }
+    }
+
+    void TraceMixtureProfile(ostream& os) {
+        for (int i=0; i<GetNmodeMax(); i++){
+            if (i!=0){
+                os << ';';
+            }
+            for (int j=0; j<GetDim(); j++){
+                if (j!=0) {
+                    os << ',';
+                }
+                os << profile[i][j];
+            }
         }
     }
     
 
 	void TraceHeader(ostream& os)	{
-		os << "#time\ttime\ttopo\tloglik\tlength\talpha\tNmode\tstatent\tstatalpha\tallocvec";
+		os << "#time\ttime\ttopo\tloglik\tlength\talpha\tNmode\tstatent\tstatalpha\tallocvec\tprofilemat";
 		os << '\n'; 
 	}
 
@@ -236,6 +253,8 @@ class RASCATFiniteGammaPhyloProcess : public virtual PoissonPhyloProcess, public
 		os << '\t' << GetMeanDirWeight() << '\t';
 		// os << '\t' << kappa << '\t' << GetAllocEntropy();
         TraceMixtureProfileAlloc(os);
+        os << '\t';
+        TraceMixtureProfile(os);
 		os << '\n';
 	}
 
